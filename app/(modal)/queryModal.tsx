@@ -20,10 +20,16 @@ interface QueryModalProps {
   onClose: () => void;
 }
 
-export default function QueryModal({ visible, jobId, onClose }: QueryModalProps) {
+export default function QueryModal({
+  visible,
+  jobId,
+  onClose,
+}: QueryModalProps) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const hasAnswer = !!answer;
 
   const submitQuery = async () => {
     if (!jobId) return;
@@ -89,11 +95,18 @@ export default function QueryModal({ visible, jobId, onClose }: QueryModalProps)
 
             <TouchableOpacity
               style={styles.button}
-              onPress={submitQuery}
+              onPress={() => {
+                if (hasAnswer) {
+                   setQuestion("");
+                  setAnswer("");
+                } else {
+                  submitQuery();
+                }
+              }}
               disabled={loading}
             >
               <Text style={styles.buttonText}>
-                {loading ? "Submitting..." : "Submit"}
+                {loading ? "Submitting..." : hasAnswer ? "Back" : "Submit"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -112,7 +125,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     maxWidth: 420,
-    maxHeight: "85%",   
+    maxHeight: "85%",
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,

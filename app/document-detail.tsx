@@ -25,8 +25,8 @@ export default function DocumentDetailScreen() {
   }>();
 
   const jobId = id;
-  console.log(jobId, "jobId is????")
-  console.log(status, "status is????")
+  console.log(jobId, "jobId is????");
+  console.log(status, "status is????");
 
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState(status || "");
@@ -35,6 +35,12 @@ export default function DocumentDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [activeList, setActiveList] = useState<ListType>(null);
   const [queryModalVisible, setQueryModalVisible] = useState(false);
+  const [information, setInformation] = useState([]);
+
+  const [infoExpanded, setInfoExpanded] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  console.log(information, "Information is====?");
 
   useEffect(() => {
     fetchStatus();
@@ -42,12 +48,13 @@ export default function DocumentDetailScreen() {
 
   const fetchStatus = async () => {
     if (!jobId) return;
-
     try {
       setLoading(true);
 
       const res = await documentAPI.checkStatus(jobId);
       console.log("STATUS RESPONSE:", res);
+      // console.log("information response????", res.data.information)
+      setInformation(res.data.information);
 
       setStatusMessage(res.status);
 
@@ -61,7 +68,6 @@ export default function DocumentDetailScreen() {
     }
   };
 
-
   const openListModal = (type: ListType) => {
     setActiveList(type);
     setModalVisible(true);
@@ -73,8 +79,13 @@ export default function DocumentDetailScreen() {
       : docData?.distribution?.copy_to_list;
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ title: "Document Detail" }} />
+   <View style={styles.container}>
+    <Stack.Screen options={{ title: "Document Detail" }} />
+
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 40 }}
+    >
 
       {/* ICON */}
       <View style={styles.headerBox}>
@@ -115,6 +126,71 @@ export default function DocumentDetailScreen() {
         <View style={styles.card}>
           <Text style={styles.docTitle}>{docData.title_of_doc}</Text>
           <Text style={styles.docSummary}>{docData.summary_doc}</Text>
+
+          {/* INFORMATION TREE */}
+          <View style={{ marginTop: 16 }}>
+            {/* information header */}
+            <TouchableOpacity
+              onPress={() => setInfoExpanded(!infoExpanded)}
+              style={styles.treeHeader}
+            >
+              <TouchableOpacity
+                onPress={() => setInfoExpanded(!infoExpanded)}
+                activeOpacity={0.7}
+                style={styles.infoHeader}
+              >
+                <Text style={styles.infoTitle}>Information</Text>
+                <View style={styles.infoCountRow}>
+                  <Text style={styles.infoCount}>{information.length}</Text>
+                  <Text style={styles.infoArrow}>
+                    {infoExpanded ? "⌄" : "›"}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </TouchableOpacity>
+
+            {/* information items */}
+            {infoExpanded &&
+              information.map((item: any, index: number) => (
+                <View key={index} style={styles.infoCard}>
+                  {/* index row */}
+                  <TouchableOpacity
+                    onPress={() =>
+                      setExpandedIndex(expandedIndex === index ? null : index)
+                    }
+                    activeOpacity={0.7}
+                    style={styles.infoCardHeader}
+                  >
+                    <Text style={styles.infoIndex}>Topic {index + 1}</Text>
+                    <Text style={styles.infoArrow}>
+                      {expandedIndex === index ? "⌄" : "›"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* expanded item */}
+                  {expandedIndex === index && (
+                    <View style={styles.treeContent}>
+                      <Text style={styles.treeText}>
+                        <Text style={styles.bold}>title:</Text> {item.title}
+                      </Text>
+
+                      {item.summary && (
+                        <Text style={styles.treeText}>
+                          <Text style={styles.bold}>summary:</Text>{" "}
+                          {item.summary}
+                        </Text>
+                      )}
+
+                      {item.related_chunks.map((chunk: string, i: number) => (
+                        <Text key={i} style={styles.treeChunk}>
+                          [{i}] "{chunk}"
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ))}
+          </View>
 
           <View style={styles.buttonRow}>
             <TouchableOpacity
@@ -172,6 +248,7 @@ export default function DocumentDetailScreen() {
         jobId={jobId}
         onClose={() => setQueryModalVisible(false)}
       />
+  </ScrollView>
     </View>
   );
 }
@@ -305,5 +382,124 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.light.text,
     paddingHorizontal: 10,
+  },
+  treeHeader: {
+    paddingVertical: 8,
+  },
+
+  treeHeaderText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.light.text,
+  },
+
+  treeIndex: {
+    fontSize: 15,
+    fontWeight: "600",
+    marginTop: 8,
+  },
+
+  treeContent: {
+    marginLeft: 16,
+    marginTop: 6,
+  },
+
+  treeText: {
+    fontSize: 14,
+    marginBottom: 4,
+    color: "#333",
+  },
+
+  treeChunk: {
+    fontSize: 13,
+    marginLeft: 16,
+    color: "#555",
+  },
+
+  bold: {
+    fontWeight: "700",
+  },
+  infoHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.light.text,
+  },
+
+  infoCountRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  infoCount: {
+    backgroundColor: "#eef2ff",
+    color: Colors.light.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    borderRadius: 12,
+    fontWeight: "600",
+    fontSize: 13,
+  },
+
+  infoArrow: {
+    fontSize: 20,
+    color: "#666",
+  },
+
+  infoCard: {
+    backgroundColor: "#f9fafb",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+  },
+
+  infoCardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  infoIndex: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.light.text,
+  },
+
+  infoContent: {
+    marginTop: 10,
+    paddingLeft: 4,
+  },
+
+  label: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#555",
+    marginTop: 6,
+  },
+
+  value: {
+    fontSize: 14,
+    color: "#333",
+    lineHeight: 20,
+  },
+
+  relatedBox: {
+    marginTop: 8,
+  },
+
+  relatedItem: {
+    fontSize: 13,
+    color: "#444",
+    marginTop: 2,
   },
 });
