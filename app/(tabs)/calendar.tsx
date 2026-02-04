@@ -111,7 +111,7 @@ export default function CalendarScreen() {
   const fetchEvents = async () => {
     try {
       const res = await axios.get(
-        "http://192.168.1.167:5000/api/events/getEvents",
+        "http://192.168.1.75:5000/api/events/getEvents",
       );
       setEvents(res.data);
     } catch (e) {

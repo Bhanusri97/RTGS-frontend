@@ -69,7 +69,7 @@ export default function MeetingModal({
       };
 
       await axios.post(
-        "http://192.168.1.167:5000/api/webex/create-meeting",
+        "http://192.168.1.75:5000/api/webex/create-meeting",
         payload
       );
 

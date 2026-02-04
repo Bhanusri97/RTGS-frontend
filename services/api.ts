@@ -3,7 +3,7 @@ const ML_SERVICE_URL = "http://localhost:5003/api"; // Kept for other ML endpoin
 const API_BASE_URL =
   "https://u454afmq1g.execute-api.ap-south-1.amazonaws.com/dev";
 
-export const BASE_URL = "http://192.168.1.167:5000/api";
+export const BASE_URL = "http://192.168.1.75:5000/api";
 
 // Auth APIs
 export const authAPI = {

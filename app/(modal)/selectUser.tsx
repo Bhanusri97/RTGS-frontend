@@ -28,7 +28,7 @@ export default function SelectUser() {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          "http://192.168.1.167:5000/api/auth/getUsers"
+          "http://192.168.1.75:5000/api/auth/getUsers"
         );
         setUsers(res.data);
       } catch (error) {

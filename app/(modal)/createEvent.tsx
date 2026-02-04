@@ -165,7 +165,7 @@ useEffect(() => {
   if (!eventId) return;
 
   axios
-    .get(`http://192.168.1.167:5000/api/events/getEventById/${eventId}`)
+    .get(`http://192.168.1.75:5000/api/events/getEventById/${eventId}`)
     .then((res) => {
       const e = res.data;
       const start = new Date(e.startTime);

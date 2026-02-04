@@ -2,7 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
 
-export const socket = io("http://192.168.1.167:5000", {
+export const socket = io("http://192.168.1.75:5000", {
   autoConnect: true,
 });
 

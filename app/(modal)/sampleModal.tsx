@@ -45,7 +45,7 @@ export default function SampleModal({
     if (!event) return;
 
     axios
-      .get(`http://192.168.1.167:5000/api/events/getEventById/${event.id}`)
+      .get(`http://192.168.1.75:5000/api/events/getEventById/${event.id}`)
       .then((res) => {
         const e = res.data;
 

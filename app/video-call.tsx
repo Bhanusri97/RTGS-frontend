@@ -25,7 +25,7 @@ useFocusEffect(
         const userId = await AsyncStorage.getItem("userId");
         if (!userId) return;
         const response = await axios.post(
-          `http://192.168.1.167:5000/api/webex/users/${userId}`
+          `http://192.168.1.75:5000/api/webex/users/${userId}`
         );
         setUserData(response.data);
       } catch (error: any) {

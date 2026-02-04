@@ -122,7 +122,7 @@ export default function WeekCalendar() {
           const day = d.getDate();
 
           const res = await axios.get(
-            "http://192.168.1.167:5000/api/events/getEventsByDay",
+            "http://192.168.1.75:5000/api/events/getEventsByDay",
             { params: { year, month, day } },
           );
 
